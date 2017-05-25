@@ -71,11 +71,28 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                 for snap in snapshots {
                     if let challengeDict = snap.value as? Dictionary<String, AnyObject> {
                         let key = snap.key
-                        print("\(snap.key)")
+                        let newDate = self.date.timeIntervalSince1970
+                        let intDate = Int(newDate)
+                        let timeCreated = (snap.childSnapshot(forPath: "time").value)!
+                        let desiredTime = (snap.childSnapshot(forPath: "challengeTime").value)!
+                        let intCreated = timeCreated as! Int
+                        let stringDesired = desiredTime as! String
+                        let intDesired = Int(stringDesired)!
+                        let desiredTimeSec = (intDesired * 86400)
+                        let totalTime = ((intCreated/1000) + desiredTimeSec)
+                        
+                        //print("\(snap.key)")
                         //print("USERS JOINED: \(usersJoined)")
                         
-                        let newChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
-                        self.newChallenges.append(newChallenge)
+                        
+                        if(intDate >= totalTime ) {
+                            //let newChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
+                            
+                        } else {
+                            let newChallenge2 = Challenge(challengeKey: key, challengeData: challengeDict)
+                            self.newChallenges.append(newChallenge2)
+                        }
+                        
                     }
                 }
             }
@@ -94,11 +111,28 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                 for snap in snapshots {
                     if let challengeDict = snap.value as? Dictionary<String, AnyObject> {
                         let key = snap.key
+                        let newDate = self.date.timeIntervalSince1970
+                        let intDate = Int(newDate)
+                        let timeCreated = (snap.childSnapshot(forPath: "time").value)!
+                        let desiredTime = (snap.childSnapshot(forPath: "challengeTime").value)!
+                        let intCreated = timeCreated as! Int
+                        let stringDesired = desiredTime as! String
+                        let intDesired = Int(stringDesired)!
+                        let desiredTimeSec = (intDesired * 86400)
+                        let totalTime = ((intCreated/1000) + desiredTimeSec)
+
                        
                         //print("USERS JOINED: \(usersJoined)")
                         
-                        let topChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
-                        self.topChallenges.append(topChallenge)
+                        //print("\(intDate)")
+                        //print("\(totalTime)")
+                        if(intDate >= totalTime ) {
+                            //let topChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
+                           
+                        } else {
+                            let topChallenge2 = Challenge(challengeKey: key, challengeData: challengeDict)
+                            self.topChallenges.append(topChallenge2)
+                        }
                     }
                 }
             }
@@ -129,18 +163,19 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                         let desiredTimeSec = (intDesired * 86400)
                         let totalTime = ((intCreated/1000) + desiredTimeSec)
                         
-                        let futureDate = Date(timeIntervalSince1970: TimeInterval(totalTime))
+                        //let futureDate = Date(timeIntervalSince1970: TimeInterval(totalTime))
                         
                         //print("Current Date Time: \(String(describing: intDate))")
                         //print("Total Time: \(totalTime)")
-                        print("Future Date: \(futureDate)")
-                        print("Current Date: \(self.date)")
+                        //print("Future Date: \(futureDate)")
+                        //print("Current Date: \(self.date)")
                         //print("USERS JOINED: \(usersJoined)")
                         
                         if((totalTime - intDate) <= 0) {
                             let yourChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
                             self.finishedChallenges.append(yourChallenge)
                         }
+                        
                     }
                 }
             }

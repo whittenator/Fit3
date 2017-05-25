@@ -74,8 +74,8 @@ class ChallengesCell: UITableViewCell {
         //Getting days between dates
         let date1 = self.date
         let date2 = Date(timeIntervalSinceNow: TimeInterval(progressTime))
-        print("Date 1: \(date1)")
-        print("Date 2: \(date2)")
+        //print("Date 1: \(date1)")
+        //print("Date 2: \(date2)")
         if (progressTime > 86400) {
         let dayComponent = calendar.dateComponents([.day], from: date1, to: date2)
         
