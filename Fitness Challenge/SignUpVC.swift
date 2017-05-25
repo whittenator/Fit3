@@ -51,13 +51,13 @@ class SignUpVC: UIViewController {
         
         
     }
-    override func viewDidAppear(_ animated: Bool) {
+    /*override func viewDidAppear(_ animated: Bool) {
         if let _ = KeychainWrapper.standard.string(forKey: KEY_UID) {
             print("WHITTEN: ID Found in KeyChain")
             performSegue(withIdentifier: "goToProfile", sender: nil)
         }
     }
- 
+ */
     func firebaseAuth(_ credential: AuthCredential) {
         Auth.auth().signIn(with: credential, completion: { (user, error) in
             if error != nil {
@@ -76,7 +76,7 @@ class SignUpVC: UIViewController {
         DataService.ds.createFirebaseDBUser(uid: id, userData: userData)
         let keychainResult = KeychainWrapper.standard.set(id, forKey: KEY_UID)
         print("WHITTEN: Data saved to keychain \(keychainResult)")
-        performSegue(withIdentifier: "goToCreateProfile", sender: nil)
+        performSegue(withIdentifier: "goToProfile", sender: nil)
     }
    
     @IBAction func signInButtonPressed(_ sender: AnyObject){

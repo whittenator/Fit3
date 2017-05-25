@@ -68,12 +68,12 @@ class RepSignUpVC: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    /*override func viewDidAppear(_ animated: Bool) {
         if let _ = KeychainWrapper.standard.string(forKey: KEY_UID) {
             print("WHITTEN: ID Found in KeyChain")
            performSegue(withIdentifier: "repGoToProfile", sender: nil)
         }
-    }
+    }*/
 
    
 

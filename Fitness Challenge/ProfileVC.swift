@@ -28,6 +28,7 @@ class ProfileVC: UIViewController{
     @IBOutlet weak var weightLbl: UILabel!
     @IBOutlet weak var genderLbl: UILabel!
     
+    @IBOutlet weak var profileImg: UIImageView!
     
    
     @IBOutlet weak var menuButton: UIBarButtonItem!
@@ -36,51 +37,23 @@ class ProfileVC: UIViewController{
     
     @IBAction func editPressed(_ sender: Any) {
         
-        performSegue(withIdentifier: "editProfile", sender: nil)
-        
-    }
-    @IBAction func signOut(_ sender: Any) {
+        performSegue(withIdentifier: "editProfile", sender: self)
         
     }
     
-    //@IBAction func settingsButton(_ sender: Any) {
-        
-        
-        
-        
-    //}
-    
-    //@IBOutlet weak var profilePhoto: UIImageView!
-    
-    //@IBAction func selectProfilePhoto(_ sender: Any) {
-        
-        //let myPickerController = UIImagePickerController()
-       // myPickerController.delegate = self
-        //myPickerController.sourceType = UIImagePickerControllerSourceType.photoLibrary
-        
-        //self.present(myPickerController, animated: true, completion: nil)
-    //}
-   /* @IBAction func goToMain(_ sender: Any) {
-        if let gender = genderTF.text, let username = userNameTF.text, (gender == "male" || gender == "female" && username.characters.count > 0){
-        
-        performSegue(withIdentifier: "goToMain", sender: nil)
-        } else {
-            let alert = UIAlertController(title: "Username and Gender Required", message: "You must enter a valid username and gender(male or female)!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            present(alert, animated: true, completion: nil)
-        }
-    }
-  */  
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
         parseForProfile()
         
-        //Sets the menuButton
+        //Rounds the profile image
         
-        //Chaning Nav Bar Features
-        
+        profileImg.layer.cornerRadius = profileImg.frame.size.height/2
+        profileImg.contentMode = .scaleAspectFill
+        profileImg.clipsToBounds = true
+        profileImg.layer.borderWidth = 3
+        profileImg.layer.borderColor = UIColor.white.cgColor
+    
         
        
         
@@ -89,45 +62,12 @@ class ProfileVC: UIViewController{
 
 
         
-        //Allows the TextFields to be deselected
-        //genderTF.delegate = self
-        //userNameTF.delegate = self
-        //weightTF.delegate = self
-        //heightTF.delegate = self
-        //ageTF.delegate = self
-        //Dismisses Keyboard
-        //self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CreateProfileVC.dismissKeyboard)))
         
-        //Customizing Nav Bar
-     
         
         
         
     }
     
-    //func dismissKeyboard() {
-        //view.endEditing(true)
-    //}
-    
-    /*func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        genderTF.resignFirstResponder()
-        userNameTF.resignFirstResponder()
-        weightTF.resignFirstResponder()
-        heightTF.resignFirstResponder()
-        ageTF.resignFirstResponder()
-        
-        return true
-    }*/
-
-    /*func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        
-        
-        profilePhoto.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        
-        self.dismiss(animated: true, completion: nil)
-        
-    }
-    */
     
     func parseForProfile() {
         DataService.ds.REF_USERS.child((Auth.auth().currentUser?.uid)!).child("profile").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -139,6 +79,9 @@ class ProfileVC: UIViewController{
                 self.bioLbl.text = dictionary["bio"] as? String
                 self.weightLbl.text = dictionary["weight"] as? String
                 self.heightLbl.text = dictionary["name"] as? String
+                //self.profileImg = dictionary["profileImg"] as! UIImageView
+                let stringURL = NSURL(string: dictionary["profileImg"] as! String)
+                self.profileImg.sd_setImage(with: stringURL as URL?)
                 
             }
             

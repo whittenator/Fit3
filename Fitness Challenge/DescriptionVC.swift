@@ -14,17 +14,10 @@ class DescriptionVC: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     
     
-    @IBAction func backToHome2(_ sender: Any) {
-        
-        performSegue(withIdentifier: "backToHome2", sender: nil)
-        
-    }
-    
-    
     
     @IBAction func joinBtnPresses(_ sender: Any) {
         
-        performSegue(withIdentifier: "goToJoinChallenge", sender: self)
+        performSegue(withIdentifier: "joinChallenge", sender: self)
         
     }
     
@@ -56,7 +49,7 @@ class DescriptionVC: UIViewController {
 
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "goToJoinChallenge" {
+        if segue.identifier == "joinChallenge" {
             let destination = segue.destination as! JoinChallengeVC
             
             let challengeTitle = self.challengeTitle

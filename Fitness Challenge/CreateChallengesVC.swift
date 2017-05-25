@@ -19,11 +19,6 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
     @IBOutlet weak var logoImg: UIImageView!
     @IBOutlet weak var imageLbl: UILabel!
     
-    @IBAction func backToChallenges(_ sender: Any) {
-        
-        performSegue(withIdentifier: "goToHome", sender: nil)
-        
-    }
     
     
     
@@ -41,10 +36,27 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
             //Loads the logo to storage
             loadLogoToStorage()
             
+            let alertController1 = UIAlertController(title: "Success", message:"Challenge has been created!", preferredStyle: .alert)
+            let OKAction1 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
+                
+            }
+            alertController1.addAction(OKAction1)
+            self.present(alertController1, animated: true, completion: nil)
+
+            
         } else {
-            print("Must enter a title, description, and duration of challenge!")
+            //print("Must enter a title, description, and duration of challenge!")
+            let alertController2 = UIAlertController(title: "ERROR", message:"All fields must be completed!", preferredStyle: .alert)
+            let OKAction2 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
+               
+                
+            }
+            alertController2.addAction(OKAction2)
+            self.present(alertController2, animated: true, completion: nil)
+
         }
-        performSegue(withIdentifier: "goToHome", sender: self)
+        //performSegue(withIdentifier: "backToChallenges", sender: self)
+        
         
     }
     override func viewDidLoad() {
@@ -78,7 +90,7 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     func completeChallenge(id: String, challengeData: Dictionary<String, String>) {
         DataService.ds.createChallenge(challengeID: id, challengeData: challengeData)
-        performSegue(withIdentifier: "goToHome", sender: self)
+        //performSegue(withIdentifier: "backToChallenges", sender: self)
     }
 
     

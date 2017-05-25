@@ -72,30 +72,38 @@ class ChallengesCell: UITableViewCell {
         progressTime = timeDifference - myInt
         
         //Getting days between dates
-        let date1 = calendar.startOfDay(for: date)
-        let date2 = calendar.startOfDay(for: (Date(timeIntervalSinceNow: TimeInterval(progressTime))))
+        let date1 = self.date
+        let date2 = Date(timeIntervalSinceNow: TimeInterval(progressTime))
+        print("Date 1: \(date1)")
+        print("Date 2: \(date2)")
+        if (progressTime > 86400) {
+        let dayComponent = calendar.dateComponents([.day], from: date1, to: date2)
         
-        let dayComponenet = calendar.dateComponents([.day], from: date1, to: date2)
         
+        //daysLeft.text = String(describing: (dayComponenet.day)!)
+        timeLbl.text = "\(String(describing: (dayComponent.day)!)) Days Left"
         
-        daysLeft.text = String(describing: (dayComponenet.day)!)
-        timeLbl.text = "Days Left"
-        
-        if(progressTime <= 86400 && progressTime >= 3600) {
-             let hourComponenet = calendar.dateComponents([.hour], from: date1, to: date2)
-            daysLeft.text = String(describing: (hourComponenet.hour)!)
-            timeLbl.text = "Hours Left"
+        } else if(progressTime <= 86400 && progressTime > 3600) {
+             let hourComponent = calendar.dateComponents([.hour], from: date1, to: date2)
+            //let hourComponent2 = calendar.dateComponents([.hour], from: Date(timeIntervalSprogressTime*1000))
+            //daysLeft.text = String(describing: (hourComponenet.hour)!)
+            timeLbl.text = "\(String(describing: (hourComponent.hour)!)) Hours Left"
+            //print("\(String(describing: (hourComponent.hour)!)) Hours Left")
             
-        } else if (progressTime < 3600 && progressTime >= 60) {
-            let minuteComponenet = calendar.dateComponents([.minute], from: date1, to: date2)
-            daysLeft.text = String(describing: (minuteComponenet.minute)!)
-            timeLbl.text = "Minutes Left"
-    } else if (progressTime < 60 && progressTime >= 0) {
-            let secondComponenet = calendar.dateComponents([.second], from: date1, to: date2)
-            daysLeft.text = String(describing: (secondComponenet.second)!)
-            timeLbl.text = "Seconds Left"
+        } else if (progressTime <= 3600 && progressTime > 60) {
+            let minuteComponent = calendar.dateComponents([.minute], from: date1, to: date2)
+            //daysLeft.text = String(describing: (minuteComponenet.minute)!)
+            timeLbl.text = "\(String(describing: (minuteComponent.minute)!)) Minutes Left"
+            //print("\(progressTime)")
+    } else if (progressTime <= 60 && progressTime > 0) {
+            let secondComponent = calendar.dateComponents([.second], from: date1, to: date2)
+            //daysLeft.text = String(describing: (secondComponenet.second)!)
+            timeLbl.text = "\(String(describing: (secondComponent.second)!)) Seconds Left"
+            //print("\(progressTime)")
     
-    }
+        } else if (progressTime <= 0) {
+            timeLbl.text = "Ended"
+        }
         
         DataService.ds.REF_CHALLENGES.child(key).child("joinedChallenger").observe(.value, with: { (snap) in
             

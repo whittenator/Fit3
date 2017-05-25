@@ -14,6 +14,7 @@ struct Profile {
     private var _age: String
     private var _bio: String
     private var _weight: String
+    private var _profileImg: String
     
     
     var gender: String {
@@ -36,12 +37,18 @@ struct Profile {
         return _weight
     }
     
-    init(userName: String, gender: String, age: String, bio: String, weight: String) {
+    var profileImg: String {
+        return _profileImg
+    }
+    
+    init(userName: String, gender: String, age: String, bio: String, weight: String, profileImg: String) {
         _userName = userName
         _gender = gender
         _age = age
         _bio = bio
         _weight = weight
+        _profileImg = profileImg
+        
     }
     
 }
