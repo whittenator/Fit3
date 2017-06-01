@@ -8,10 +8,16 @@
 
 import UIKit
 import Firebase
+import FirebaseStorageUI
 
 class LeaderboardsCell: UITableViewCell {
     @IBOutlet weak var repsLbl: UILabel!
     @IBOutlet weak var userNameLbl: UILabel!
+    @IBOutlet weak var userProfileImg: UIImageView!
+    @IBOutlet weak var rankLbl: UILabel!
+    
+   
+   
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -31,8 +37,21 @@ class LeaderboardsCell: UITableViewCell {
         
         userNameLbl.text = leader.userName
         repsLbl.text = leader.reps
+       
+        let stringURL = NSURL(string: leader.profileImg)
+        self.userProfileImg.sd_setImage(with: stringURL as URL?)
         //let videoLink = leader.videoLink
        // userNameLbl.text = userName as! String?
+        
+        userProfileImg.layer.cornerRadius = userProfileImg.frame.size.height/2
+        userProfileImg.contentMode = .scaleAspectFill
+        userProfileImg.clipsToBounds = true
+        userProfileImg.layer.borderWidth = 3
+        userProfileImg.layer.borderColor = UIColor.white.cgColor
+    
+        
+        
+        
     }
 
 }

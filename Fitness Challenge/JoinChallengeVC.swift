@@ -46,6 +46,7 @@ class JoinChallengeVC: UIViewController {
     var userEnteredList = [String]()
     var userName = String()
     var videoURL: URL?
+    var videoID = ""
     
     
     
@@ -56,11 +57,12 @@ class JoinChallengeVC: UIViewController {
             
             let currentUser = Auth.auth().currentUser!.uid
             //Looking at the users profile for gender
-            DataService.ds.REF_USER_CURRENT.child("profile").child("gender").observeSingleEvent(of: .value, with: { (snaps) in
-                let gender = snaps.value as? String
+            DataService.ds.REF_USER_CURRENT.child("profile").observeSingleEvent(of: .value, with: { (snaps) in
+                let gender = snaps.childSnapshot(forPath: "gender").value! as! String
+                let profileIMG = snaps.childSnapshot(forPath: "profileImg").value! as! String
             
-            DataService.ds.REF_CHALLENGES.child(self.challengeKey).child("joinedChallenger").child(currentUser).setValue(["reps": reps, "videoLink": self.videoLbl.text!, "gender": gender ])
-            DataService.ds.REF_LEADERBOARDS.child(self.challengeKey).child(currentUser).setValue(["reps": reps,"userName": self.userNameLbl.text!, "videoLink": self.videoLbl.text!, "gender": gender])
+            DataService.ds.REF_CHALLENGES.child(self.challengeKey).child("joinedChallenger").child(currentUser).setValue(["reps": reps, "videoLink": self.videoLbl.text!, "gender": gender, "videoID": self.videoID])
+            DataService.ds.REF_LEADERBOARDS.child(self.challengeKey).child(currentUser).setValue(["reps": reps,"userName": self.userNameLbl.text!, "videoLink": self.videoLbl.text!, "gender": gender, "videoID": self.videoID, "profileImg": profileIMG])
                 })
             let alertController = UIAlertController(title: "Entry Submitted", message:"You are now entered into the \(challengeTitle)!", preferredStyle: .alert)
             let OKAction = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
@@ -116,6 +118,10 @@ class JoinChallengeVC: UIViewController {
            
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.reloadInputViews()
     }
 
     
@@ -225,6 +231,7 @@ class JoinChallengeVC: UIViewController {
     
     func uploadMovieToFirebaseStorage(url: NSURL) {
         let currentUser = Auth.auth().currentUser!.uid
+        videoID = "videos/\(self.challengeKey)/\(currentUser).mov"
         let storageRef = Storage.storage().reference(withPath: "videos/\(self.challengeKey)/\(currentUser).mov")
         let uploadMetadata = StorageMetadata()
         uploadMetadata.contentType = "video/quicktime"
@@ -237,6 +244,7 @@ class JoinChallengeVC: UIViewController {
                 print ("Your download URL is \(String(describing: metadata?.downloadURL()))")
                self.videoURL = (metadata!.downloadURL())
                 self.videoLbl.text = String(describing: (metadata!.downloadURL())!)
+               
             }
         }
         uploadTask.observe(.progress) { [weak self] (snapshot) in

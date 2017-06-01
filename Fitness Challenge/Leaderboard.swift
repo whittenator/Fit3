@@ -15,6 +15,8 @@ class Leaderboard {
     private var _userName: String!
     private var _videoLink: String!
     private var _gender: String!
+    private var _videoID: String!
+    private var _profileImg: String!
     
     var reps: String {
         return _reps
@@ -40,6 +42,10 @@ class Leaderboard {
         return _challengeKey
     }
     
+    var profileImg: String {
+        return _profileImg
+    }
+    
     init(reps: String) {
         self._reps = reps
     
@@ -47,6 +53,11 @@ class Leaderboard {
     init(videoLink: String) {
         self._videoLink = videoLink
     }
+    init(videoID: String) {
+        self._videoID = videoID
+    }
+    
+    
     
     init(userKey: String, leaderData: Dictionary<String, AnyObject>) {
         self._userKey = userKey
@@ -64,6 +75,12 @@ class Leaderboard {
         
         if let gender = leaderData["gender"] as? String {
             self._gender = gender
+        }
+        if let videoID = leaderData["videoID"] as? String {
+            self._videoID = videoID
+        }
+        if let profileImg = leaderData["profileImg"] as? String {
+            self._profileImg = profileImg
         }
         
     }

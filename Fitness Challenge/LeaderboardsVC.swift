@@ -24,6 +24,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var userName = String()
     
    
+    @IBOutlet weak var leaderRank: UILabel!
    
     @IBOutlet weak var mySegment: UISegmentedControl!
     
@@ -55,8 +56,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         //let currentUser = FIRAuth.auth()!.currentUser!.uid
         
-        let query = DataService.ds.REF_LEADERBOARDS.child(self.challengeKey).queryOrdered(byChild: "reps").queryLimited(toLast: 10)
-        query.observe(.value, with: { (snapshot) in
+        DataService.ds.REF_LEADERBOARDS.child(self.challengeKey).queryOrdered(byChild: "reps").observe(.value, with: { (snapshot) in
             
             self.maleLeaders = []
             self.femaleLeaders = []
@@ -64,20 +64,20 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
            // print("WHITTEN: \(snapshot)")
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
                 for snap in snapshots {
-                    print("SNAP: \(snap)")
+                    //print("SNAP: \(snap)")
                     if let leaderDict = snap.value as? Dictionary<String, AnyObject> {
                         let key = snap.key
                         let gender = snap.childSnapshot(forPath: "gender")
-                        print("WHITTEN GENDER: \(gender)")
+                        //print("WHITTEN GENDER: \(gender)")
                         if gender.value as? String == "Male" {
                         //print("This is the key\(key)")
-                            print("YO WHITTEN: THIS PERSON IS A MALE!!")
+                            //print("YO WHITTEN: THIS PERSON IS A MALE!!")
                         
                         let leader = Leaderboard(userKey: key, leaderData: leaderDict)
                         
                         self.maleLeaders.append(leader)
                         } else {
-                            print("YO WHITTEN: THIS IS A FEMALE!")
+                            //print("YO WHITTEN: THIS IS A FEMALE!")
                             let leader2 = Leaderboard(userKey: key, leaderData: leaderDict)
                             self.femaleLeaders.append(leader2)
                         }
@@ -159,10 +159,13 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         switch (mySegment.selectedSegmentIndex) {
         case 0:
             let leader = maleLeaders[indexPath.row]
+            cell?.rankLbl.text = ("\(indexPath.row + 1)")
             cell!.configureCell(leader: leader)
+            
             break
         case 1:
             let leader2 = femaleLeaders[indexPath.row]
+            cell?.rankLbl.text = ("\(indexPath.row + 1)")
             cell!.configureCell(leader: leader2)
             break
             
@@ -170,7 +173,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             break
             
         }
-
+        
            return cell!
         
     }

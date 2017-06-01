@@ -16,6 +16,9 @@ class Challenge {
     private var _challengeTime: String!
     private var _stampTime: Int!
     private var _usersJoined: Int!
+    private var _createBy: String!
+    private var _videoID: String!
+    private var _logoLocation: String!
     
     var title: String {
         return _title
@@ -45,6 +48,18 @@ class Challenge {
         return _usersJoined
     }
     
+    var createdBy: String {
+        return _createBy
+    }
+    
+    var videoID: String {
+        return _videoID
+    }
+    
+    var logoLocation: String {
+        return _logoLocation
+    }
+    
     init(title: String, description: String) {
         self._title = title
         self._description = description
@@ -71,6 +86,16 @@ class Challenge {
         }
         if let usersJoined = challengeData["usersJoined"] as? Int {
             self._usersJoined = usersJoined
+        }
+        if let createdBy = challengeData["createdBy"] as? String {
+            self._createBy = createdBy
+        }
+        if let videoID = challengeData["videoID"] as? String  {
+            self._videoID = videoID
+        }
+        
+        if let logoLocation = challengeData["logoLocation"] as? String {
+            self._logoLocation = logoLocation
         }
         
     }

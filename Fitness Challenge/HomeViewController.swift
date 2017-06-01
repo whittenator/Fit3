@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import PullToRefresh
 
 class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataSource, UINavigationBarDelegate, UINavigationControllerDelegate {
     
@@ -21,6 +22,14 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
     var finishedChallenges = [Challenge]()
     
      var date = Date()
+    var refreshControl: UIRefreshControl!
+    
+    var challengeBase = DataService.ds.REF_CHALLENGES
+    var leaderboardBase = DataService.ds.REF_LEADERBOARDS
+    var logoStorage = DataService.ds.STORAGE_LOGOS
+    var videoStorage = DataService.ds.STORAGE_VIDEOS
+    
+    var vidKey = ""
     
     
     @IBOutlet weak var homeButton: UIBarButtonItem!
@@ -30,38 +39,20 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
     
     
     
+   
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-       /*
-        //Getting database references
-        DataService.ds.REF_CHALLENGES.observe(.value, with: { (snapshot) in
-            
-            self.challenges = [] //clears out challenges array at the beginning of listener
-            self.topChallenges = []
-            
-            print(snapshot.value!)
-            if let snapshot = snapshot.children.allObjects as? [DataSnapshot] {
-                for snap in snapshot {
-                    //print("SNAP: \(snap)")
-                    if let challengeDict = snap.value as? Dictionary<String, AnyObject> {
-                        let key = snap.key
-                        let usersJoined = snap.childSnapshot(forPath: "joinedChallenger").childrenCount
-                        let challenge = Challenge(challengeKey: key, challengeData: challengeDict)
-                        self.challenges.append(challenge)
-                    }
-                }
-            }
-            self.tableView.reloadData()
-        })
-        */
+   
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.tableView.reloadData()
+       
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.tableView.reloadData()
         
         //Query2 gets Newly Made challenges based on time of creation
-        let query2 = DataService.ds.REF_CHALLENGES.queryOrdered(byChild: "time").queryLimited(toLast: 10)
+        let query2 = DataService.ds.REF_CHALLENGES.queryOrdered(byChild: "time")
         query2.observe(.value, with: { (snapshot) in
             
             self.newChallenges = []
@@ -85,12 +76,16 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                         //print("USERS JOINED: \(usersJoined)")
                         
                         
+                        
                         if(intDate >= totalTime ) {
-                            //let newChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
+                            
+                          
                             
                         } else {
                             let newChallenge2 = Challenge(challengeKey: key, challengeData: challengeDict)
                             self.newChallenges.append(newChallenge2)
+                            self.tableView.reloadData()
+                           
                         }
                         
                     }
@@ -98,14 +93,16 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
             }
             self.newChallenges.reverse()
             self.tableView.reloadData()
-        
+            
         })
+        self.tableView.reloadData()
         
         //Query 1 shows Top Challenges based on Total users joined
-        let query1 = DataService.ds.REF_CHALLENGES.queryOrdered(byChild: "usersJoined").queryLimited(toLast: 10)
+        let query1 = DataService.ds.REF_CHALLENGES.queryOrdered(byChild: "usersJoined")
         query1.observe(.value, with: { (snapshot) in
             
             self.topChallenges = []
+           
             
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                 for snap in snapshots {
@@ -115,23 +112,32 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                         let intDate = Int(newDate)
                         let timeCreated = (snap.childSnapshot(forPath: "time").value)!
                         let desiredTime = (snap.childSnapshot(forPath: "challengeTime").value)!
+                        
+                        
                         let intCreated = timeCreated as! Int
                         let stringDesired = desiredTime as! String
                         let intDesired = Int(stringDesired)!
                         let desiredTimeSec = (intDesired * 86400)
                         let totalTime = ((intCreated/1000) + desiredTimeSec)
-
-                       
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         //print("USERS JOINED: \(usersJoined)")
                         
                         //print("\(intDate)")
                         //print("\(totalTime)")
                         if(intDate >= totalTime ) {
-                            //let topChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
                            
+                            
                         } else {
                             let topChallenge2 = Challenge(challengeKey: key, challengeData: challengeDict)
                             self.topChallenges.append(topChallenge2)
+                            self.tableView.reloadData()
                         }
                     }
                 }
@@ -140,19 +146,51 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
             self.tableView.reloadData()
             
         })
-        
+        self.tableView.reloadData()
         //Gets all completed challenges and puts them in Finished Challenges
-       //let currentUser = Auth.auth().currentUser!.uid
+        //let currentUser = Auth.auth().currentUser!.uid
         let query3 = DataService.ds.REF_CHALLENGES.queryLimited(toLast: 10)
         query3.observe(.value, with: { (snapshot) in
             
             self.finishedChallenges = []
             
             
+            //let currentUser = Auth.auth().currentUser!.uid
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                 for snap in snapshots {
+                    
+                    
+                    
                     if let challengeDict = snap.value as? Dictionary<String, AnyObject> {
                         let key = snap.key
+                        let newKey = snap.childSnapshot(forPath: "joinedChallenger")
+                        let vidVal = newKey.key
+                        
+                        //Delete storage video
+                        DataService.ds.REF_LEADERBOARDS.child(key).observeSingleEvent(of: .value, with: {(dataSnap) in
+                            if let snapshots = dataSnap.children.allObjects as? [DataSnapshot]{
+                                for snap in snapshots {
+                                    //print("SNAP: \(snap)")
+                                    if let leaderDict = snap.value as? Dictionary<String, AnyObject> {
+                                        let key = snap.key
+                                        self.vidKey = snap.childSnapshot(forPath: "videoID").value! as! String
+                                        let vidLink = snap.childSnapshot(forPath: "videoLink").value! as! String
+                                        
+                                        
+                                        // print("USER ID: \(key)")
+                                        //print("VIDEO ID: \(self.vidKey)")
+                                        
+                                        
+                                        
+                                    }
+                                }
+                            }
+                            
+                            
+                        })
+                        
+                       
+                       
                         let newDate = self.date.timeIntervalSince1970
                         let intDate = Int(newDate)
                         let timeCreated = (snap.childSnapshot(forPath: "time").value)!
@@ -163,27 +201,94 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                         let desiredTimeSec = (intDesired * 86400)
                         let totalTime = ((intCreated/1000) + desiredTimeSec)
                         
-                        //let futureDate = Date(timeIntervalSince1970: TimeInterval(totalTime))
+                       
                         
-                        //print("Current Date Time: \(String(describing: intDate))")
-                        //print("Total Time: \(totalTime)")
-                        //print("Future Date: \(futureDate)")
-                        //print("Current Date: \(self.date)")
-                        //print("USERS JOINED: \(usersJoined)")
                         
                         if((totalTime - intDate) <= 0) {
                             let yourChallenge = Challenge(challengeKey: key, challengeData: challengeDict)
                             self.finishedChallenges.append(yourChallenge)
+                            self.tableView.reloadData()
+                            //print("TOTAL TIME: \(totalTime)")
+                            //print("CURRENT TIME: \(intDate)")
+                            //print("3 Hours after TOTAL TIME: \(totalTime + (3*3600))")
+                            
+                            
+                            
+                            
                         }
                         
+                        
+                        if ((totalTime - intDate) <= 0 && ((totalTime + (15 * 86400) ) <= intDate)) {
+                            
+                            
+                            //Deletes challenge from database
+                            self.challengeBase.child(key).removeValue(completionBlock: {(error, ref) in
+                                if error != nil {
+                                    print("error \(String(describing: error))")
+                                } else {
+                                    print("DELETED CHALLENGE")
+                                }
+                            })
+                            self.tableView.reloadData()
+                            
+                            //Delete Storage Logo of Challenge
+                            let logoURL = snap.childSnapshot(forPath: "logoLocation").value!
+                            print("LOGO PATH: \(logoURL)")
+                            self.deleteLogoFile(ref: logoURL as! String, vidRef: self.vidKey)
+                            
+                            
+                            //Deletes leaderboard data from database
+                            self.leaderboardBase.child(key).removeValue(completionBlock: {(error, ref) in
+                                if error != nil {
+                                    print("error \(String(describing: error))")
+                                } else {
+                                    print("DELETED LEADERBOARD")
+                                }
+                            })
+                            self.tableView.reloadData()
+                            
+                            
+                            
+                        }
                     }
                 }
             }
             self.finishedChallenges.reverse()
             self.tableView.reloadData()
             
+            
         })
+        self.tableView.reloadData()
 
+        
+    }
+    
+    func refresh(_ refreshControl: UIRefreshControl) {
+        refreshControl.endRefreshing()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        
+        
+        if #available(iOS 10.0, *) {
+        tableView.refreshControl = refreshControl
+        } else {
+            tableView.addSubview(refreshControl)
+        }
+        
+        //Adds Refresh spinner if table view is pulled up
+        refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = UIColor.black
+        refreshControl.tintColor = UIColor.white
+        tableView.addSubview(refreshControl)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        
         
     }
     
@@ -287,6 +392,50 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         tableView.reloadData()
         
     }
+    
+    //Function to remove firebase nodes
+    /*
+    func deleteNodes(removeChild: String) {
+        challengeBase.child(removeChild).removeValue(completionBlock: { (error, ref) in
+            if (error != nil) {
+                print("error \(String(describing: error))")
+            }
+    })
+}*/
+    func deleteLogoFile(ref: String, vidRef: String) {
+        
+        let newRef = DataService.ds.STORAGE_LOGOS.child(ref)
+        let videoRef = Storage.storage().reference().child("\(vidRef)")
+        
+        newRef.delete(completion: {(error) in
+            if (error != nil) {
+            print("ERROR DELETING LOGO: \(String(describing: error))")
+            } else {
+                print("SUCCESSFULLY DELETED LOGO")
+            }
+        })
+        
+        videoRef.delete(completion: {(error2) in
+            if (error2 != nil) {
+                print("ERROR DELETING VIDEO: \(String(describing: error2))")
+            } else {
+                print("SUCCESSFULLY DELETED VIDEO")
+            }
+            
+            
+            
+        })
+        
+        
+        
+    }
+    
+    
+        
+        
+    
+    
+  
     
     
     

@@ -20,6 +20,9 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
     @IBOutlet weak var imageLbl: UILabel!
     
     
+    //Logo Image Location
+    var logoLocation = ""
+    
     
     
     @IBAction func uploadLogo(_ sender: Any) {
@@ -30,11 +33,12 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
     
     @IBAction func submitChallenge(_ sender: Any) {
         //Current Users UID
+        let currentUser = Auth.auth().currentUser!.uid
         //Checks to make sure user has entered all boxes
         if let title = titleTF.text, let description = descriptionTextView.text, let challengeTime = durationTF.text,let imgURL = imageLbl.text ,(title.characters.count > 0 && description.characters.count > 0 && challengeTime.characters.count > 0 && imgURL.characters.count > 0) {
-            DataService.ds.REF_CHALLENGES.childByAutoId().setValue(["title": title ,"description": description,"challengeTime": challengeTime, "imageURL": imgURL, "time": Firebase.ServerValue.timestamp()])
+            DataService.ds.REF_CHALLENGES.childByAutoId().setValue(["title": title ,"description": description,"challengeTime": challengeTime, "imageURL": imgURL, "time": Firebase.ServerValue.timestamp(), "createdBy": currentUser, "logoLocation": self.logoLocation])
             //Loads the logo to storage
-            loadLogoToStorage()
+            //loadLogoToStorage()
             
             let alertController1 = UIAlertController(title: "Success", message:"Challenge has been created!", preferredStyle: .alert)
             let OKAction1 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
@@ -56,9 +60,13 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
 
         }
         //performSegue(withIdentifier: "backToChallenges", sender: self)
-        
+        self.reloadInputViews()
         
     }
+    override func viewWillAppear(_ animated: Bool) {
+        self.reloadInputViews()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -155,7 +163,11 @@ extension CreateChallengesVC: UIImagePickerControllerDelegate {
             let metadata = StorageMetadata()
             metadata.contentType = "image/jpeg"
             
-            DataService.ds.STORAGE_LOGOS.child("\(currentUser).\(imgUID)").putData(imgData, metadata: metadata) { (metadata, error) in
+            logoLocation = "\(currentUser)\(imgUID)"
+    
+        
+            
+            DataService.ds.STORAGE_LOGOS.child(logoLocation).putData(imgData, metadata: metadata) { (metadata, error) in
                 
                 if error != nil {
                     print("WHITTEN: Unable to upload image to FireBase Storage")

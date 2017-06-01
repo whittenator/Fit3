@@ -21,5 +21,6 @@ target 'Fitness Challenge' do
   pod 'FacebookCore'
   pod 'FacebookLogin'
   pod 'FacebookShare'
+  pod 'PullToRefresher'
 
 end

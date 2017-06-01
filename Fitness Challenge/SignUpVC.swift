@@ -56,8 +56,8 @@ class SignUpVC: UIViewController {
             print("WHITTEN: ID Found in KeyChain")
             performSegue(withIdentifier: "goToProfile", sender: nil)
         }
-    }
- */
+    }*/
+ 
     func firebaseAuth(_ credential: AuthCredential) {
         Auth.auth().signIn(with: credential, completion: { (user, error) in
             if error != nil {

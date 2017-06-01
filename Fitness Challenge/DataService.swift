@@ -23,6 +23,7 @@ class DataService {
     private var _REF_USERS = DB_BASE.child("users")
     private var _REF_JOINEDCHALLENGES = DB_BASE.child("joinedChallenge")
     private var _REF_LEADERBOARDS = DB_BASE.child("leaderboards")
+    private var _REF_VIDEO_LIST = DB_BASE.child("videoList")
     // Storage References
     private var _STORAGE_VIDEOS = STORAGE_BASE.child("videos")
     private var _STORAGE_LOGOS = STORAGE_BASE.child("images/challengeLogos")
@@ -46,6 +47,10 @@ class DataService {
     
     var REF_USERS: DatabaseReference {
         return _REF_USERS
+    }
+    
+    var REF_VIDEO_LIST: DatabaseReference {
+        return _REF_VIDEO_LIST
     }
     
     var REF_USER_CURRENT: DatabaseReference {
