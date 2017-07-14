@@ -22,5 +22,6 @@ target 'Fitness Challenge' do
   pod 'FacebookLogin'
   pod 'FacebookShare'
   pod 'PullToRefresher'
+  pod 'IQKeyboardManagerSwift'
 
 end

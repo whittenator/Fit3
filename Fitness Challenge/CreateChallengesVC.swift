@@ -78,6 +78,13 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
         descriptionTextView.delegate = self
         durationTF.delegate = self
         
+        self.durationTF.text = ""
+        self.descriptionTextView.text = ""
+        self.titleTF.text = ""
+        
+        
+        
+        
          }
     
     func dismissKeyboard() {
@@ -100,6 +107,10 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
         DataService.ds.createChallenge(challengeID: id, challengeData: challengeData)
         //performSegue(withIdentifier: "backToChallenges", sender: self)
     }
+    
+    
+    
+    
 
     
     
@@ -193,6 +204,8 @@ extension CreateChallengesVC: UIImagePickerControllerDelegate {
         
 }
 }
+
+
 
 
 

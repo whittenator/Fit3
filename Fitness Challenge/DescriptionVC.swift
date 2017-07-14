@@ -14,6 +14,7 @@ class DescriptionVC: UIViewController {
     @IBOutlet weak var viaSegueLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
+    
     var date = Date()
     var newTotalTime = 0
     var newCurrentTime = 0
@@ -24,9 +25,6 @@ class DescriptionVC: UIViewController {
     
     @IBAction func joinBtnPresses(_ sender: Any) {
         
-        
-        //print("NEW TOTAL TIME: \(self.newTotalTime)")
-        //print("NEW TOTAL TIME: \(self.newCurrentTime)")
         
         if((self.newTotalTime - self.newCurrentTime)  <= 0) {
             let alertController1 = UIAlertController(title: "SORRY", message:"This challenge has ended!", preferredStyle: .alert)
@@ -57,12 +55,20 @@ class DescriptionVC: UIViewController {
     var challengeTitle = ""
     var challengeDescription = ""
     var challengeKey = ""
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         viaSegueLabel.text = challengeTitle
         descriptionLabel.text = challengeDescription
-        print(challengeKey)
+        print("CHALLENGE SELECTED: \(challengeKey)")
+        
+        //Navigation Bar Title
+        navigationItem.title = "Challenge"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(editTapped))
+
+        
         
         DataService.ds.REF_CHALLENGES.child(challengeKey).observeSingleEvent(of:.value, with: {(snapshot) in
             //print("SNAPSHOT: \(snapshot)")
@@ -81,22 +87,28 @@ class DescriptionVC: UIViewController {
             self.newTotalTime = totalTime
             self.newCurrentTime = timeCreated
             
+        })
+        
+        //This dataservice call is testing to see if the current user created this challenge or not
+        let currentUser = Auth.auth().currentUser!.uid 
+        DataService.ds.REF_CHALLENGES.child(challengeKey).observeSingleEvent(of: .value, with: {(snapshot) in
             
-            
-            
-            
-            
-            
-            
-            
+            let createdBy = snapshot.childSnapshot(forPath: "createdBy").value! as! String
+            self.challengeKey = snapshot.key
+            //print("CREATED BY USER: \(createdBy)")
+            //print("CURRENT USER: \(currentUser)")
+            if(createdBy == currentUser) {
+                print("This user created it")
+                
+                self.navigationItem.rightBarButtonItem?.isEnabled = true
+            } else {
+                
+                self.navigationItem.rightBarButtonItem?.isEnabled = false
+                print("This user didnt create it")
+            }
             
         })
 
-        
-       
-      
-        
-        // Do any additional setup after loading the view.
     }
 
     
@@ -123,9 +135,27 @@ class DescriptionVC: UIViewController {
             destination2.challengeDescription = challengeDescription
             destination2.challengeKey = challengeKey
             
-           
+        } else if segue.identifier == "editChallenge" {
+            let destination2 = segue.destination as! editChallengeVC
             
+            
+           
+            let challengeKey = self.challengeKey
+            
+         
+            destination2.challengeKey = challengeKey
+
         }
     }
+
+
+    
+    func editTapped() {
+        
+        performSegue(withIdentifier: "editChallenge", sender: self)
+        
+    }
+    
+    
     
 }

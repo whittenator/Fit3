@@ -32,6 +32,8 @@ class CreateProfileVC: UIViewController, UINavigationBarDelegate, UINavigationCo
         handleSelectLogo()
     }
     
+  
+    
     
     
     
@@ -45,7 +47,7 @@ class CreateProfileVC: UIViewController, UINavigationBarDelegate, UINavigationCo
         let gender = genderSegment.titleForSegment(at: genderSegment.selectedSegmentIndex)
         let weight = weightTF.text
         
-        if ((username?.characters.count)! > 0 && (downloadURL.characters.count) > 0) {
+        if ((username?.characters.count)! > 0) {
 
 
     DataService.ds.REF_USERS.child(Auth.auth().currentUser!.uid).child("profile").setValue(["userName": username ,"bio": bio, "name": name, "age": age, "gender":gender,"weight": weight, "profileImg": downloadURL])
@@ -53,6 +55,7 @@ class CreateProfileVC: UIViewController, UINavigationBarDelegate, UINavigationCo
             let alertController2 = UIAlertController(title: "Success", message:"Profile has been updated!", preferredStyle: .alert)
             let OKAction2 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
                 print("You've pressed OK button")
+                self.dismiss(animated: true, completion: nil)
                 
             }
             alertController2.addAction(OKAction2)
@@ -62,9 +65,9 @@ class CreateProfileVC: UIViewController, UINavigationBarDelegate, UINavigationCo
         } else {
             mustEnterUsername()
         }
-        //performSegue(withIdentifier: "backToProfile", sender: nil)
+       
         print("User Info Saved")
-    
+        
     }
     
     func mustEnterUsername() {

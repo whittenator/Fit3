@@ -9,3 +9,13 @@
 import Foundation
 
 let KEY_UID = "uid"
+
+struct Constants {
+
+struct MessageFields {
+    static let name = "username"
+    static let text = "text"
+    static let photoURL = "photoURL"
+    static let imageURL = "imageURL"
+  }
+}

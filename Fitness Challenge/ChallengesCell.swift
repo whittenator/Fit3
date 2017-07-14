@@ -19,6 +19,8 @@ class ChallengesCell: UITableViewCell {
     @IBOutlet weak var daysLeft: UILabel!
     @IBOutlet weak var timeLbl: UILabel!
     @IBOutlet weak var numberJoined: UILabel!
+    @IBOutlet weak var dateLbl: UILabel!
+   
     
     var time = 0
     var originalTime = 0
@@ -29,6 +31,7 @@ class ChallengesCell: UITableViewCell {
     var timer = Timer()
     var date = Date()
     var calendar = Calendar.current
+    var challengeKey = ""
     
     
     
@@ -62,6 +65,14 @@ class ChallengesCell: UITableViewCell {
         time = time * 86400
         originalTime = Int(challenge.challengeTime)!
         stampTime = challenge.stampTime
+        let stampTimeInSeconds = stampTime/1000
+        let stampTimeDate = Date(timeIntervalSince1970: TimeInterval(stampTimeInSeconds))
+        let month = calendar.component(.month, from: stampTimeDate)
+        let day = calendar.component(.day, from: stampTimeDate)
+        let year = calendar.component(.year, from: stampTimeDate)
+        
+        self.dateLbl.text = "\(month)/\(day)/\(year)"
+       
         key = challenge.challengeKey
         //minute = Int(challenge.challengeTime)!
         //Configuring the logo
@@ -113,24 +124,14 @@ class ChallengesCell: UITableViewCell {
             
             
         })
-        
-
-        //print("Time Left of Event: ")
-        //print("\(Date(timeIntervalSinceNow: TimeInterval(progressTime)))")
-        
-        
-        /*
-        print("\(date)")
-        
-        print("\(progressTime)")
-        print("\(time)")
-        print("\(myInt/1000)")
-        if(progressTime >= 0) {
-        progressView.setProgress((((Float(time) - Float(progressTime))/(Float(time))) * 100) , animated: true)
-        }
-     */
-       // runTimer()
+      
         
         
     }
+    
+    //TODO: Allow user to re-edit the challenge or delete it
+   
+    
+    
+  
 }

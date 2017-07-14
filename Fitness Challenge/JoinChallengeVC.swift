@@ -62,7 +62,7 @@ class JoinChallengeVC: UIViewController {
                 let profileIMG = snaps.childSnapshot(forPath: "profileImg").value! as! String
             
             DataService.ds.REF_CHALLENGES.child(self.challengeKey).child("joinedChallenger").child(currentUser).setValue(["reps": reps, "videoLink": self.videoLbl.text!, "gender": gender, "videoID": self.videoID])
-            DataService.ds.REF_LEADERBOARDS.child(self.challengeKey).child(currentUser).setValue(["reps": reps,"userName": self.userNameLbl.text!, "videoLink": self.videoLbl.text!, "gender": gender, "videoID": self.videoID, "profileImg": profileIMG])
+            DataService.ds.REF_LEADERBOARDS.child(self.challengeKey).child(currentUser).setValue(["reps": reps,"userName": self.userNameLbl.text!, "videoLink": self.videoLbl.text!, "gender": gender, "videoID": self.videoID, "profileImg": profileIMG, "challengeKey": self.challengeKey])
                 })
             let alertController = UIAlertController(title: "Entry Submitted", message:"You are now entered into the \(challengeTitle)!", preferredStyle: .alert)
             let OKAction = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in

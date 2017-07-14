@@ -26,7 +26,8 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
    
     @IBOutlet weak var leaderRank: UILabel!
    
-    @IBOutlet weak var mySegment: UISegmentedControl!
+    
+    @IBOutlet weak var mySegment: SegmentedControl!
     
     
     
@@ -51,8 +52,9 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         leaderTV.delegate = self
         leaderTV.dataSource = self
         
-        //Hide the Tab Bar
-        
+        //Making segement controller pretty
+        self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
+        navigationItem.title = "Leaderboards"
         
         //let currentUser = FIRAuth.auth()!.currentUser!.uid
         
@@ -74,6 +76,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                             //print("YO WHITTEN: THIS PERSON IS A MALE!!")
                         
                         let leader = Leaderboard(userKey: key, leaderData: leaderDict)
+                            print("LEADER: \(leader)")
                         
                         self.maleLeaders.append(leader)
                         } else {
@@ -110,7 +113,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         var returnValue = 0
         
-        switch (mySegment.selectedSegmentIndex) {
+        switch (mySegment.selectedIndex) {
         case 0:
             returnValue = maleLeaders.count
             break
@@ -128,7 +131,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         
-        switch (mySegment.selectedSegmentIndex) {
+        switch (mySegment.selectedIndex) {
         case 0:
             let leader = maleLeaders[indexPath.row]
             performSegue(withIdentifier: "VideoVC", sender: leader)
@@ -156,7 +159,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         let cell = tableView.dequeueReusableCell(withIdentifier: "LeaderboardsCell") as? LeaderboardsCell
             //cell.configureCell(leader: leader)
         
-        switch (mySegment.selectedSegmentIndex) {
+        switch (mySegment.selectedIndex) {
         case 0:
             let leader = maleLeaders[indexPath.row]
             cell?.rankLbl.text = ("\(indexPath.row + 1)")
@@ -178,11 +181,34 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let message = UITableViewRowAction(style: .normal, title: "Message", handler:  {action, index in
+            //TODO: Take User to the message platform 
+            if (self.mySegment.selectedIndex == 0) {
+            let leader = self.maleLeaders[indexPath.row]
+            self.performSegue(withIdentifier: "CreateMessage", sender: leader)
+            } else {
+                let leader = self.femaleLeaders[indexPath.row]
+                self.performSegue(withIdentifier: "CreateMessage", sender: leader)
+            }
+        })
+        message.backgroundColor = UIColor.lightGray
+        
+        return [message]
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? VideoVC {
             
             if let video = sender as? Leaderboard {
                 destination.videoLink = video
+            }
+            if let challengeID = sender as? Leaderboard {
+                destination.userKey = challengeID
+            }
+            if let challengeKey = sender as? Leaderboard {
+                destination.challengeKey = challengeKey
             }
             
         }
@@ -192,6 +218,17 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             destination2.challengeKey = challengeKey
 
         }
+        
+        if let destination3 = segue.destination as? MessagesVC {
+            
+            
+            if let userKey = sender as? Leaderboard {
+                destination3.userKey = userKey
+            }
+            
+            
+        }
+        
     }
     
     
@@ -200,6 +237,8 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         leaderTV.reloadData()
         
     }
+    
+    
     
     
     

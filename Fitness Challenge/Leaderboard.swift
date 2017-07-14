@@ -82,6 +82,9 @@ class Leaderboard {
         if let profileImg = leaderData["profileImg"] as? String {
             self._profileImg = profileImg
         }
+        if let challengeKey = leaderData["challengeKey"] as? String {
+            self._challengeKey = challengeKey
+        }
         
     }
     

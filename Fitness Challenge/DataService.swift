@@ -24,6 +24,9 @@ class DataService {
     private var _REF_JOINEDCHALLENGES = DB_BASE.child("joinedChallenge")
     private var _REF_LEADERBOARDS = DB_BASE.child("leaderboards")
     private var _REF_VIDEO_LIST = DB_BASE.child("videoList")
+    private var _REF_REPORTS = DB_BASE.child("reports")
+    private var _REF_MESSAGES = DB_BASE.child("messages")
+    private var _REF_PROFILE = DB_BASE.child("users").child("profile")
     // Storage References
     private var _STORAGE_VIDEOS = STORAGE_BASE.child("videos")
     private var _STORAGE_LOGOS = STORAGE_BASE.child("images/challengeLogos")
@@ -51,6 +54,18 @@ class DataService {
     
     var REF_VIDEO_LIST: DatabaseReference {
         return _REF_VIDEO_LIST
+    }
+    
+    var REF_REPORTS: DatabaseReference {
+        return _REF_REPORTS
+    }
+    
+    var REF_MESSAGES: DatabaseReference {
+        return _REF_MESSAGES
+    }
+    
+    var REF_PROFILE: DatabaseReference {
+        return _REF_PROFILE
     }
     
     var REF_USER_CURRENT: DatabaseReference {
@@ -84,6 +99,10 @@ class DataService {
     
     func joinChallenge(challengeID: String, joinedData: Dictionary<String, AnyObject>) {
         REF_JOINEDCHALLENGES.child(challengeID).updateChildValues(joinedData)
+    }
+    
+    func createReporter(challengeKey: String ,uid: String,reporter: String ,reportData: Dictionary<String,String>) {
+        REF_REPORTS.child(uid).updateChildValues(reportData)
     }
     
 }

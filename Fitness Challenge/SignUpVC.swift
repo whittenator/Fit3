@@ -51,12 +51,13 @@ class SignUpVC: UIViewController {
         
         
     }
-    /*override func viewDidAppear(_ animated: Bool) {
+    
+    override func viewDidAppear(_ animated: Bool) {
         if let _ = KeychainWrapper.standard.string(forKey: KEY_UID) {
             print("WHITTEN: ID Found in KeyChain")
             performSegue(withIdentifier: "goToProfile", sender: nil)
         }
-    }*/
+    }
  
     func firebaseAuth(_ credential: AuthCredential) {
         Auth.auth().signIn(with: credential, completion: { (user, error) in
@@ -65,7 +66,7 @@ class SignUpVC: UIViewController {
             } else {
                 print("WHITTEN: Successfully authenticated with Firebase")
                 if let user = user {
-                    let userData = ["prodivder": credential.provider]
+                    let userData = ["prodivder": credential.provider, "isAdmin": false] as [String : Any]
                     self.completeSignIn(id: user.uid, userData: userData)
                 }
             }
@@ -78,6 +79,12 @@ class SignUpVC: UIViewController {
         print("WHITTEN: Data saved to keychain \(keychainResult)")
         performSegue(withIdentifier: "goToProfile", sender: nil)
     }
+    
+    func completeSignUp(id: String, userData: Dictionary<String, Any>) {
+        DataService.ds.createFirebaseDBUser(uid: id, userData: userData)
+        
+        performSegue(withIdentifier: "goToProfile", sender: nil)
+    }
    
     @IBAction func signInButtonPressed(_ sender: AnyObject){
         
@@ -87,7 +94,7 @@ class SignUpVC: UIViewController {
                 if error == nil {
                     print("WHITTEN: Email user authenticated with Firebase")
                     if let user = user {
-                        let userData = ["provider": user.providerID] as [String : Any]
+                        let userData = ["provider": user.providerID, "isAdmin": false] as [String : Any]
                         self.completeSignIn(id: user.uid, userData: userData)
                     }
                 } else {
@@ -97,8 +104,8 @@ class SignUpVC: UIViewController {
                         } else {
                             print("WHITTEN: Successfully authenticated with Firebase")
                             if let user = user {
-                                let userData = ["provider": user.providerID] as [String : Any]
-                                self.completeSignIn(id: user.uid, userData: userData)
+                                let userData = ["provider": user.providerID, "isAdmin": false] as [String : Any]
+                                self.completeSignUp(id: user.uid, userData: userData)
                             }
                         }
                     })

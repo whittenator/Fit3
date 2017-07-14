@@ -33,7 +33,25 @@ class ProfileVC: UIViewController{
    
     @IBOutlet weak var menuButton: UIBarButtonItem!
     
+   
     
+    @IBAction func signOutPressed(_ sender: Any) {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            performSegue(withIdentifier: "goToSignUp", sender: nil)
+        } catch let signOutError as NSError {
+            print("Error signing out: \(signOutError.localizedDescription)")
+        }
+        
+    }
+    
+    @IBAction func messagesPressed(_ sender: Any) {
+        
+        performSegue(withIdentifier: "goToMessages", sender: nil)
+        
+    }
+   
     
     @IBAction func editPressed(_ sender: Any) {
         
@@ -55,7 +73,20 @@ class ProfileVC: UIViewController{
         profileImg.layer.borderColor = UIColor.white.cgColor
     
         
-       
+        DataService.ds.REF_USER_CURRENT.observeSingleEvent(of: .value, with: {(snapshot) in
+            
+            let isAdmin = snapshot.childSnapshot(forPath: "isAdmin").value! as! Bool
+            if(isAdmin == false) {
+                //print("THIS IS NOT AN ADMIN!")
+                let items = self.tabBarController?.tabBar.items
+                let tabItem = items![2]
+                tabItem.isEnabled = false
+            } else {
+                print("THIS PERSON IS AN ADMIN")
+            }
+            
+            
+        })
         
         
         
