@@ -10,7 +10,7 @@ import UIKit
 import SwiftKeychainWrapper
 import Firebase
 
-class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDelegate, UINavigationBarDelegate, UINavigationControllerDelegate {
+class CreateChallengesVC: UIViewController,UITableViewDataSource,UITextFieldDelegate, UITextViewDelegate, UINavigationBarDelegate, UINavigationControllerDelegate {
 
     @IBOutlet weak var homeButton2: UIBarButtonItem!
     @IBOutlet weak var titleTF: UITextField!
@@ -42,6 +42,7 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
             
             let alertController1 = UIAlertController(title: "Success", message:"Challenge has been created!", preferredStyle: .alert)
             let OKAction1 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
+                self.dismiss(animated: true, completion: nil)
                 
             }
             alertController1.addAction(OKAction1)
@@ -109,6 +110,20 @@ class CreateChallengesVC: UIViewController, UITextFieldDelegate, UITextViewDeleg
     }
     
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "LabelCell", for: indexPath)
+        
+        cell.textLabel?.text = "Section \(indexPath.section) Row \(indexPath.row)"
+        
+        return cell
+    }
     
     
 

@@ -11,6 +11,8 @@ import Foundation
 class Challenge {
     private var _title: String!
     private var _description: String!
+    private var _rules: String!
+    private var _prizes: String!
     private var _challengeKey: String!
     private var _logoLink: String!
     private var _challengeTime: String!
@@ -27,6 +29,15 @@ class Challenge {
     var description: String {
         return _description
     }
+    
+    var rules: String {
+        return _rules
+    }
+    
+    var prizes: String {
+        return _prizes
+    }
+    
     
     var challengeKey: String {
         return _challengeKey
@@ -71,6 +82,12 @@ class Challenge {
         
         if let description = challengeData["description"] as? String {
             self._description = description
+        }
+        if let rules = challengeData["rules"] as? String {
+            self._rules = rules
+        }
+        if let prizes = challengeData["prizes"] as? String {
+            self._prizes = prizes
         }
         if let title = challengeData["title"] as? String {
             self._title = title

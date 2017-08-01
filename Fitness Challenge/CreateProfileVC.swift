@@ -28,18 +28,22 @@ class CreateProfileVC: UIViewController, UINavigationBarDelegate, UINavigationCo
     var downloadURL = ""
     
     
+    
     @IBAction func changeProfileImg(_ sender: Any) {
         handleSelectLogo()
     }
     
   
+    @IBAction func backToProfile(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     
     
     
     @IBAction func applyBtnPressed(_ sender: Any) {
     
-        
+        let currentUser = Auth.auth().currentUser!.uid
         let username = usernameTF.text
         let bio = bioTF.text
         let name = nameTF.text
@@ -47,10 +51,11 @@ class CreateProfileVC: UIViewController, UINavigationBarDelegate, UINavigationCo
         let gender = genderSegment.titleForSegment(at: genderSegment.selectedSegmentIndex)
         let weight = weightTF.text
         
+        
         if ((username?.characters.count)! > 0) {
 
 
-    DataService.ds.REF_USERS.child(Auth.auth().currentUser!.uid).child("profile").setValue(["userName": username ,"bio": bio, "name": name, "age": age, "gender":gender,"weight": weight, "profileImg": downloadURL])
+    DataService.ds.REF_USERS.child(currentUser).child("profile").setValue(["userName": username ,"bio": bio, "name": name, "age": age, "gender":gender,"weight": weight, "profileImg": downloadURL])
         
             let alertController2 = UIAlertController(title: "Success", message:"Profile has been updated!", preferredStyle: .alert)
             let OKAction2 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
@@ -220,11 +225,11 @@ extension CreateProfileVC: UIImagePickerControllerDelegate {
         
         if let imgData = UIImageJPEGRepresentation(img, 0.2) {
             
-            let imgUID = NSUUID().uuidString
+            //let imgUID = NSUUID().uuidString
             let metadata = StorageMetadata()
             metadata.contentType = "image/jpeg"
             
-            DataService.ds.STORAGE_PROFILE_IMAGES.child("\(currentUser).\(imgUID)").putData(imgData, metadata: metadata) { (metadata, error) in
+            DataService.ds.STORAGE_PROFILE_IMAGES.child("\(currentUser)").putData(imgData, metadata: metadata) { (metadata, error) in
                 
                 if error != nil {
                     print("WHITTEN: Unable to upload image to FireBase Storage")

@@ -36,8 +36,13 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
     
     
     @IBOutlet weak var homeButton: UIBarButtonItem!
+    @IBAction func unwindToHomeVC(segue: UIStoryboardSegue) {}
     
     //If Top Challenges button is selected
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.tableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +56,8 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
         
         
         //Hiding create challenges from non admins
-        DataService.ds.REF_USER_CURRENT.observeSingleEvent(of: .value, with: {(snapshot) in
+        let currentUser = Auth.auth().currentUser!.uid
+        DataService.ds.REF_USERS.child(currentUser).observeSingleEvent(of: .value, with: {(snapshot) in
 
             let isAdmin = snapshot.childSnapshot(forPath: "isAdmin").value! as! Bool
             if(isAdmin == false) {
@@ -342,25 +348,36 @@ class HomeViewController: UIViewController,UITableViewDelegate, UITableViewDataS
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+            navigationItem.backBarButtonItem?.tintColor = UIColor.init(red: 0.40, green: 0.85, blue: 1.0, alpha: 1.0)
+        
         if segue.identifier == "goToChallenge" {
-            let destination = segue.destination as! DescriptionVC
+            let destination = segue.destination as! DescriptionTVC
             
             if let indexPath = self.tableView.indexPathForSelectedRow {
                 if segmentBar.selectedIndex == 0 {
                     let theTitle = topChallenges[indexPath.row]
                     destination.challengeTitle = theTitle.title
                     destination.challengeDescription = theTitle.description
+                    destination.challengeRules = theTitle.rules
+                    destination.challengePrizes = theTitle.prizes
                     destination.challengeKey = theTitle.challengeKey
+                    destination.challengeLogo = theTitle.logoLink
                 } else if (segmentBar.selectedIndex == 1) {
                 let theTitle = newChallenges[indexPath.row]
                 destination.challengeTitle = theTitle.title
                 destination.challengeDescription = theTitle.description
+                    destination.challengeRules = theTitle.rules
+                    destination.challengePrizes = theTitle.prizes
                 destination.challengeKey = theTitle.challengeKey
+                    destination.challengeLogo = theTitle.logoLink
                 } else {
                     let theTitle = finishedChallenges[indexPath.row]
                     destination.challengeTitle = theTitle.title
                     destination.challengeDescription = theTitle.description
+                    destination.challengeRules = theTitle.rules
+                    destination.challengePrizes = theTitle.prizes
                     destination.challengeKey = theTitle.challengeKey
+                    destination.challengeLogo = theTitle.logoLink
 
                 }
             }

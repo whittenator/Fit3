@@ -72,8 +72,8 @@ class ProfileVC: UIViewController{
         profileImg.layer.borderWidth = 3
         profileImg.layer.borderColor = UIColor.white.cgColor
     
-        
-        DataService.ds.REF_USER_CURRENT.observeSingleEvent(of: .value, with: {(snapshot) in
+        let currentUser = Auth.auth().currentUser!.uid
+        DataService.ds.REF_USERS.child(currentUser).observeSingleEvent(of: .value, with: {(snapshot) in
             
             let isAdmin = snapshot.childSnapshot(forPath: "isAdmin").value! as! Bool
             if(isAdmin == false) {
@@ -99,9 +99,13 @@ class ProfileVC: UIViewController{
         
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        navigationItem.backBarButtonItem?.tintColor = UIColor.init(red: 0.40, green: 0.85, blue: 1.0, alpha: 1.0)
+    }
+    
     
     func parseForProfile() {
-        DataService.ds.REF_USERS.child((Auth.auth().currentUser?.uid)!).child("profile").observeSingleEvent(of: .value, with: { (snapshot) in
+        DataService.ds.REF_USERS.child((Auth.auth().currentUser?.uid)!).child("profile").observe(.value, with: {(snapshot) in
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 self.usernameLbl.text = dictionary["userName"] as? String

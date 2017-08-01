@@ -16,7 +16,7 @@ import UIKit
     var label1 = "Male"
     var label2 = "Female"
     
-    var items: [String] = ["Top", "New", "Finished"] {
+    var items: [String] = ["TOP", "NEW", "ENDED"] {
         didSet {
             setupLabels()
         }
@@ -46,7 +46,7 @@ import UIKit
         layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0).cgColor
         layer.borderWidth = 1
         
-        backgroundColor = UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.1)
+        backgroundColor = UIColor.init(red: 0.40, green: 0.85, blue: 1.0, alpha: 1.0)
         
         setupLabels()
         insertSubview(thumbView, at: 0)
@@ -64,8 +64,8 @@ import UIKit
             let label = UILabel(frame: CGRect.zero)
             label.text = items[index - 1]
             label.textAlignment = .center
-            label.textColor = UIColor.white
-            label.font = UIFont(name: "Avenir Next Bold", size: 20)
+            label.textColor = UIColor.init(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+            label.font = UIFont(name: "Avenir Next Bold", size: 22)
             self.addSubview(label)
             labels.append(label)
         }

@@ -8,58 +8,59 @@
 
 import UIKit
 
-class PageVC: UIPageViewController {
+class PageVC: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource{
+    
+    var pageControl = UIPageControl()
+    
+    lazy var orderedViewControllers: [UIViewController] = {
+        return [self.newVc(viewController: "Quick"),
+                self.newVc(viewController: "Username"),
+                self.newVc(viewController: "ProfileImg"),
+                self.newVc(viewController: "Gender"),
+                self.newVc(viewController: "DateOfBirth")]
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        dataSource = self
+        self.dataSource = self
         
+        self.delegate = self
+        configurePageControl()
+        
+        // This sets up the first view that will show up on our page control
         if let firstViewController = orderedViewControllers.first {
-            setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+            setViewControllers([firstViewController],
+                               direction: .forward,
+                               animated: true,
+                               completion: nil)
         }
+        
         
     }
     
-    private(set) lazy var orderedViewControllers: [UIViewController] = {
-        return [self.newColoredViewController(name: "QuickStart"),
-                self.newColoredViewController(name: "Username"),
-                self.newColoredViewController(name: "ProfileImg"),
-                self.newColoredViewController(name: "Gender"),
-                self.newColoredViewController(name: "DateOfBirth")]
-    }()
-    
-    private func newColoredViewController(name: String) -> UIViewController {
-        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier:"\(name)VC")
-    }
-
-    
-}
-
-extension PageVC: UIPageViewControllerDataSource {
-    
-    
-    
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = orderedViewControllers.index(of: viewController) else {
-            return nil
-        }
-        
-        let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = orderedViewControllers.count
-        
-        guard orderedViewControllersCount != nextIndex else {
-            return nil
-        }
-        
-        guard orderedViewControllersCount > nextIndex else {
-            return nil
-        }
-        
-        return orderedViewControllers[nextIndex]
+    func newVc(viewController: String) -> UIViewController {
+        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: viewController)
     }
     
+    // MARK: Delegate functions
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        let pageContentViewController = pageViewController.viewControllers![0]
+        self.pageControl.currentPage = orderedViewControllers.index(of: pageContentViewController)!
+    }
+    
+    func configurePageControl() {
+        // The total number of pages that are available is based on how many available colors we have.
+        pageControl = UIPageControl(frame: CGRect(x: 0,y: UIScreen.main.bounds.maxY - 50,width: UIScreen.main.bounds.width,height: 50))
+        self.pageControl.numberOfPages = orderedViewControllers.count
+        self.pageControl.currentPage = 0
+        self.pageControl.tintColor = UIColor.black
+        self.pageControl.pageIndicatorTintColor = UIColor.white
+        self.pageControl.currentPageIndicatorTintColor = UIColor.black
+        self.view.addSubview(pageControl)
+    }
+    
+    // MARK: Data source functions.
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = orderedViewControllers.index(of: viewController) else {
             return nil
@@ -67,7 +68,11 @@ extension PageVC: UIPageViewControllerDataSource {
         
         let previousIndex = viewControllerIndex - 1
         
+        // User is on the first view controller and swiped left to loop to
+        // the last view controller.
         guard previousIndex >= 0 else {
+            //return orderedViewControllers.last
+            // Uncommment the line below, remove the line above if you don't want the page control to loop.
             return nil
         }
         
@@ -78,19 +83,35 @@ extension PageVC: UIPageViewControllerDataSource {
         return orderedViewControllers[previousIndex]
     }
     
-    func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        return orderedViewControllers.count
-    }
-    
-    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        guard let firstViewController = viewControllers?.first,
-            let firstViewControllerIndex = orderedViewControllers.index(of: firstViewController) else {
-                return 0
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let viewControllerIndex = orderedViewControllers.index(of: viewController) else {
+            return nil
         }
         
-        return firstViewControllerIndex
+        let nextIndex = viewControllerIndex + 1
+        let orderedViewControllersCount = orderedViewControllers.count
+        
+        // User is on the last view controller and swiped right to loop to
+        // the first view controller.
+        guard orderedViewControllersCount != nextIndex else {
+            return orderedViewControllers.first
+            // Uncommment the line below, remove the line above if you don't want the page control to loop.
+            // return nil
+        }
+        
+        guard orderedViewControllersCount > nextIndex else {
+            return nil
+        }
+        
+        return orderedViewControllers[nextIndex]
     }
     
     
+
+
+
     
 }
+
+
+

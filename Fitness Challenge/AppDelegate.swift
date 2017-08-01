@@ -24,6 +24,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         IQKeyboardManager.sharedManager().enable = true
         
+        //UINavigationBar.appearance().tintColor = UIColor.init(red: 0.00, green: 0.48, blue: 0.76, alpha: 1.0)
+        //UINavigationBar.appearance().backgroundColor = UIColor.init(red: 0.00, green: 0.48, blue: 0.76, alpha: 1.0)
+        let font = UIFont(name: "Avenir Next", size: 20)
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.classForCoder() as! UIAppearanceContainer.Type]).setTitleTextAttributes([NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.init(red: 0.40, green: 0.85, blue: 1.0, alpha: 1.0)], for: .normal)
+        
+        
         return true
     }
     

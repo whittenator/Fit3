@@ -123,13 +123,30 @@ class JoinChallengeVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.reloadInputViews()
     }
+    
+    func backTapped() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func setNavigationBar() {
+        let screenSize: CGRect = UIScreen.main.bounds
+        let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 60))
+        navBar.tintColor = UIColor.init(red: 0.00, green: 0.48, blue: 0.76, alpha: 1.0)
+        navBar.barTintColor = UIColor.init(red: 0.00, green: 0.48, blue: 0.76, alpha: 1.0)
+        let navItem = UINavigationItem(title: "Join Challenge")
+        let backItem = UIBarButtonItem(title: "<Back", style: .plain, target: self, action: #selector(backTapped))
+        navItem.leftBarButtonItem = backItem
+        navBar.setItems([navItem], animated: false)
+        self.view.addSubview(navBar)
+    }
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
 
-       
+        self.setNavigationBar()
+
        
         
          self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(JoinChallengeVC.dismissKeyboard)))

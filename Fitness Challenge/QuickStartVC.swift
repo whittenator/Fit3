@@ -51,14 +51,14 @@ class QuickStartVC: UIViewController, UITextFieldDelegate, UINavigationControlle
         let name = ""
         let age = ""
         let weight = ""
-       self.username = usernameLbl.text!
+       username = usernameTF.text!
         
         self.gender = genderSeg.titleForSegment(at: genderSeg.selectedSegmentIndex)!
         
         if ((self.username.characters.count) > 0 && (downloadURL.characters.count) > 0) {
             
             
-            DataService.ds.REF_USERS.child(Auth.auth().currentUser!.uid).child("profile").setValue(["userName": username ,"bio": bio, "name": name, "age": age, "gender":gender,"weight": weight, "profileImg": downloadURL])
+            DataService.ds.REF_REPORTS.child("TEST").setValue(["userName": username ,"bio": bio, "name": name, "age": age, "gender":gender,"weight": weight, "profileImg": downloadURL])
             
             let alertController2 = UIAlertController(title: "Success", message:"Profile has been updated!", preferredStyle: .alert)
             let OKAction2 = UIAlertAction(title: "OK", style: .default) { (action: UIAlertAction) in
@@ -72,7 +72,7 @@ class QuickStartVC: UIViewController, UITextFieldDelegate, UINavigationControlle
         } else {
             mustEnterUsername()
         }
-        performSegue(withIdentifier: "goToProfile", sender: nil)
+        //performSegue(withIdentifier: "goToProfile", sender: nil)
         print("User Info Saved")
         
     }

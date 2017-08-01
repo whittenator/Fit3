@@ -41,6 +41,23 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
+    func setNavigationBar() {
+        let screenSize: CGRect = UIScreen.main.bounds
+        let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 60))
+        let navItem = UINavigationItem(title: "Leaderboards")
+        navBar.tintColor = UIColor.init(red: 0.00, green: 0.48, blue: 0.76, alpha: 1.0)
+        navBar.barTintColor = UIColor.init(red: 0.00, green: 0.48, blue: 0.76, alpha: 1.0)
+        let backItem = UIBarButtonItem(title: "<Back", style: .plain, target: self, action: #selector(backTapped))
+        navItem.leftBarButtonItem = backItem
+        navBar.setItems([navItem], animated: false)
+        self.view.addSubview(navBar)
+    }
+    
+    func backTapped() {
+        self.dismiss(animated: true, completion: nil)
+    }
+
+    
     
     
     
@@ -48,7 +65,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         
         
-        
+        self.setNavigationBar()
         leaderTV.delegate = self
         leaderTV.dataSource = self
         
@@ -183,6 +200,12 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
+        let delete = UITableViewRowAction(style: .normal, title: "Delete", handler:  {action, index in
+            //TODO: Take User to the message platform
+            print("Challenge Deleted")
+        })
+        delete.backgroundColor = UIColor.red
+        
         let message = UITableViewRowAction(style: .normal, title: "Message", handler:  {action, index in
             //TODO: Take User to the message platform 
             if (self.mySegment.selectedIndex == 0) {
@@ -195,7 +218,7 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         })
         message.backgroundColor = UIColor.lightGray
         
-        return [message]
+        return [message, delete]
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -219,11 +242,11 @@ class LeaderboardsVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         }
         
-        if let destination3 = segue.destination as? MessagesVC {
+        if let destination3 = segue.destination as? CreateAMessageVC {
             
             
             if let userKey = sender as? Leaderboard {
-                destination3.userKey = userKey
+                destination3.userKey = userKey.userKey
             }
             
             

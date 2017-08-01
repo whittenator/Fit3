@@ -65,15 +65,18 @@ class DescriptionVC: UIViewController {
         print("CHALLENGE SELECTED: \(challengeKey)")
         
         //Navigation Bar Title
-        navigationItem.title = "Challenge"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(editTapped))
-
+        self.navigationItem.title = "Challenge"
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(editTapped))
+        self.navigationItem.rightBarButtonItem!.tintColor = UIColor.init(red: 0.40, green: 0.85, blue: 1.0, alpha: 1.0)
+        self.navigationItem.leftBarButtonItem!.tintColor = UIColor.init(red: 0.40, green: 0.85, blue: 1.0, alpha: 1.0)
+        self.navigationItem.rightBarButtonItem!.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Avenir Next", size: 20)!], for: .normal)
+        
         
         
         DataService.ds.REF_CHALLENGES.child(challengeKey).observeSingleEvent(of:.value, with: {(snapshot) in
             //print("SNAPSHOT: \(snapshot)")
             //print("Description KEY: \(key)")
-            let currentTime = Int(self.date.timeIntervalSince1970)
+            //let currentTime = Int(self.date.timeIntervalSince1970)
             let timeCreated = ((snapshot.childSnapshot(forPath: "time").value)! as! Int) / 1000
             let desiredTime = (snapshot.childSnapshot(forPath: "challengeTime").value)! as! String
             let intDesiredTime = Int(desiredTime)!
